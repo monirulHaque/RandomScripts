@@ -13,9 +13,7 @@ Original Folder Structure:
             - mask00_colon.png
             ...
         -03
-        .
-        .
-        .
+        ...
         -31
 
         
@@ -33,7 +31,6 @@ Organized Folder Structure:
         - image1430
 
 '''
-
 
 import os
 import shutil
@@ -81,3 +78,22 @@ for folder_name in dirs:
                     destination_file_path = os.path.join(destination_folder + f'\image{total_count}\masks', new_file_name) 
                     shutil.copy(source_file_path, destination_file_path)            
 print(total_count)
+# Train-Test Split
+import sys
+import subprocess
+
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
+'split-folders'])
+
+import splitfolders
+
+os.chdir(rootdir)
+if not os.path.exists('split_organized'):
+    os.makedirs('split_organized')
+else:
+    shutil.rmtree(os.path.join(rootdir, 'split_organized'))
+    os.makedirs('split_organized')
+
+splitfolders.ratio(os.path.join(rootdir, 'organized'), output="split_organized",
+    seed=36, ratio=(.8, .2), group_prefix=None, move=True)
+shutil.rmtree(os.path.join(rootdir, 'organized'))
