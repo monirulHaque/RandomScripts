@@ -34,6 +34,8 @@ Organized Folder Structure:
 
 import os
 import shutil
+import time
+import random
 
 if not os.path.exists('organized'):
     os.makedirs('organized')
@@ -77,15 +79,9 @@ for folder_name in dirs:
                     source_file_path = os.path.join(source_folder, mask_file)
                     destination_file_path = os.path.join(destination_folder + f'\image{total_count}\masks', new_file_name) 
                     shutil.copy(source_file_path, destination_file_path)            
-print(total_count)
+print('Total image count', total_count)
+
 # Train-Test Split
-import sys
-import subprocess
-
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
-'split-folders'])
-
-import splitfolders
 
 os.chdir(rootdir)
 if not os.path.exists('split_organized'):
@@ -94,6 +90,43 @@ else:
     shutil.rmtree(os.path.join(rootdir, 'split_organized'))
     os.makedirs('split_organized')
 
-splitfolders.ratio(os.path.join(rootdir, 'organized'), output="split_organized",
-    seed=36, ratio=(.8, .2), group_prefix=None, move=True)
-shutil.rmtree(os.path.join(rootdir, 'organized'))
+os.chdir('split_organized')
+if not os.path.exists('train'):
+    os.makedirs('train')
+    os.makedirs('test')
+os.chdir(rootdir)
+
+def split_folder(src_folder, train_folder, test_folder, split_ratio=0.8):
+    if not os.path.exists(src_folder):
+        print("Source folder does not exist.")
+        return
+
+    if not os.path.exists(train_folder):
+        os.makedirs(train_folder)
+
+    if not os.path.exists(test_folder):
+        os.makedirs(test_folder)
+
+    files = os.listdir(src_folder)
+    random.shuffle(files)
+
+    split_index = int(len(files) * split_ratio)
+    train_files = files[:split_index]
+    test_files = files[split_index:]
+
+    for file in train_files:
+        src_path = os.path.join(src_folder, file)
+        dest_path = os.path.join(train_folder, file)
+        shutil.move(src_path, dest_path)
+
+    for file in test_files:
+        src_path = os.path.join(src_folder, file)
+        dest_path = os.path.join(test_folder, file)
+        shutil.move(src_path, dest_path)
+
+src_folder = rootdir + './organized'
+train_folder = rootdir + './split_organized//train'
+test_folder = rootdir + './split_organized//test'
+split_ratio = 0.8
+
+split_folder(src_folder, train_folder, test_folder, split_ratio)
