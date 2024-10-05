@@ -8,8 +8,8 @@ subprocess.check_call([sys.executable, '-m', 'pip', 'install',
 'selenium'])
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
 'maskpass'])
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
-'webdriver-manager'])
+# subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
+# 'webdriver-manager'])
 
 import openpyxl
 from selenium import webdriver
@@ -18,6 +18,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 import maskpass  # to hide the password
@@ -25,9 +26,9 @@ from os import path
 
 
 # Initializing chrome driver in selenium bot
-# chrome_options = webdriver.ChromeOptions()
-# driver = webdriver.Chrome()
-driver = webdriver.Chrome(ChromeDriverManager().install())
+chrome_options = webdriver.ChromeOptions()
+driver = webdriver.Chrome()
+# driver =  webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 #Navigating to Advising Area
 driver.get("https://vjudge.net/contest/632171#rank")
@@ -56,7 +57,7 @@ except:
     print("ERROR: CONTEST TABLE NOT FOUND!")
 
 # Creating the sheet
-filename = "contest.xlsx"
+filename = "contest2.xlsx"
 wb = openpyxl.Workbook()
 ws = wb.active
 ws['A1'] = "UserName"
